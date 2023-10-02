@@ -63,8 +63,8 @@ all: main-build
 main-build: Lab1_Ex7_8_9_10.elf secondary-outputs
 
 # Tool invocations
-Lab1_Ex7_8_9_10.elf Lab1_Ex7_8_9_10.map: $(OBJS) $(USER_OBJS) D:\BK\ e-learning\HK231\MCU\MCU_Lab\Lab_1\Lab1_STM32\Lab1_Ex7_8_9_10\STM32F103C6TX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "Lab1_Ex7_8_9_10.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m3 -T"D:\BK e-learning\HK231\MCU\MCU_Lab\Lab_1\Lab1_STM32\Lab1_Ex7_8_9_10\STM32F103C6TX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Lab1_Ex7_8_9_10.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+Lab1_Ex7_8_9_10.elf Lab1_Ex7_8_9_10.map: $(OBJS) $(USER_OBJS) D:\BK\ e-learning\HK231\MCU\MCU_LAB_231\Lab_1\Lab1_STM32\Lab1_Ex7_8_9_10\STM32F103C6TX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "Lab1_Ex7_8_9_10.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m3 -T"D:\BK e-learning\HK231\MCU\MCU_LAB_231\Lab_1\Lab1_STM32\Lab1_Ex7_8_9_10\STM32F103C6TX_FLASH.ld" --specs=nosys.specs -Wl,-Map="Lab1_Ex7_8_9_10.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 
