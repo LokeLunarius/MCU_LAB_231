@@ -1,0 +1,4 @@
+fsm_uart.c:20:6:buffer_clean	1
+fsm_uart.c:26:5:get_command	8
+fsm_uart.c:47:6:command_parser_fsm	9
+fsm_uart.c:76:6:uart_communication_fsm	4

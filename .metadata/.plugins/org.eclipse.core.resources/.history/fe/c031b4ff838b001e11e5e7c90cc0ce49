@@ -1,0 +1,38 @@
+/*
+ * fsm_uart.h
+ *
+ *  Created on: Nov 23, 2023
+ *      Author: Loke
+ */
+
+#ifndef INC_FSM_UART_H_
+#define INC_FSM_UART_H_
+
+#include "global.h"
+
+#define INIT 			100
+#define STANDBY			101
+#define COMMAND_READ 	102
+#define RST				103
+#define OK				104
+#define COMMAND_TRUE	105
+#define COMMAND_FALSE 	106
+
+#define MAX_BUFFER_SIZE 30
+
+extern uint8_t temp;
+extern uint8_t buffer[MAX_BUFFER_SIZE];
+extern uint8_t index_buffer;
+extern uint8_t buffer_flag;
+extern uint32_t ADC_value;
+extern int status;
+extern int command;
+extern int cmd;
+
+void clearBuffer();
+int compare();
+
+void command_parser_fsm();
+void uart_communication_fsm();
+
+#endif /* INC_FSM_UART_H_ */
