@@ -1,0 +1,132 @@
+/*
+ * scheduler.c
+ *
+ *  Created on: Nov 25, 2022
+ *      Author: Windows 10
+ */
+
+#include "scherduler.h"
+
+sTasks SCH_tasks_G[SCH_MAX_TASKS];
+
+int front = 0; //task pointer
+int rear = 0;
+
+void SCH_Init(void)
+{
+	front = 0;
+	rear = 0;
+	for(int i = 0; i < SCH_MAX_TASKS; i++)
+	{
+		SCH_tasks_G[i].pTask = 0;
+		SCH_tasks_G[i].Delay = 0;
+		SCH_tasks_G[i].Period = 0;
+		SCH_tasks_G[i].RunMe = 0;
+		SCH_tasks_G[i].TaskID = SCH_MAX_TASKS;
+	}
+}
+
+int SCH_IsEmpty(void) {
+	if(front == 0 && rear == 0)
+	{
+		return 1;
+	}
+    return 0;
+}
+
+int SCH_IsFull(void) {
+	if(rear >= SCH_MAX_TASKS)
+	{
+		return 1;
+	}
+    return 0;
+}
+
+void SCH_Add_Task(void(*pFunction)(), uint32_t DELAY, uint32_t PERIOD)
+{
+	if(!SCH_IsFull())
+	{
+		if(rear < 0)
+		{
+			rear = 0;
+		}
+		SCH_tasks_G[rear].pTask = pFunction;
+		SCH_tasks_G[rear].Delay = DELAY/10;
+		SCH_tasks_G[rear].Period = PERIOD/10;
+		SCH_tasks_G[rear].RunMe = 0;
+		SCH_tasks_G[rear].TaskID = rear;
+
+		rear++;
+	}
+}
+
+void SCH_Update(void)
+{
+	for(int i = 0; i < rear; i++)
+	{
+		if(SCH_tasks_G[i].Delay > 0)
+		{
+			SCH_tasks_G[i].Delay--;
+		}
+		else
+		{
+			SCH_tasks_G[i].Delay = SCH_tasks_G[i].Period;
+			SCH_tasks_G[i].RunMe += 1;
+		}
+	}
+}
+
+void SCH_Dispatch_Task(void)
+{
+	if(!SCH_IsEmpty())
+	{
+		if(front >= SCH_MAX_TASKS)
+		{
+			front = 0;
+		}
+		if(SCH_tasks_G[front].RunMe > 0)
+		{
+			SCH_tasks_G[front].RunMe--;
+			(*SCH_tasks_G[front].pTask)();
+			if(SCH_tasks_G[front].Period == 0)
+			{
+				SCH_Delete(front);
+			}
+		}
+		front++;
+	}
+}
+
+uint32_t task_ID(void(*pFunction)())
+{
+	for(int i = 0; i < SCH_MAX_TASKS; i++)
+	{
+		if(SCH_tasks_G[i].pTask == pFunction)
+		{
+			return i;
+		}
+	}
+	return -1;
+}
+
+void SCH_Delete(uint32_t ID)
+{
+    if (ID < SCH_MAX_TASKS) {
+        for (int i = ID; i < rear - 1; i++) {
+            SCH_tasks_G[i].pTask = SCH_tasks_G[i + 1].pTask;
+            SCH_tasks_G[i].Delay = SCH_tasks_G[i + 1].Delay;
+            SCH_tasks_G[i].Period = SCH_tasks_G[i + 1].Period;
+            SCH_tasks_G[i].RunMe = SCH_tasks_G[i + 1].RunMe;
+            SCH_tasks_G[i].TaskID = SCH_tasks_G[i + 1].TaskID;
+        }
+
+        // Clear the values of the last task in the array after shifting
+        SCH_tasks_G[rear - 1].pTask = 0;
+        SCH_tasks_G[rear - 1].Delay = 0;
+        SCH_tasks_G[rear - 1].Period = 0;
+        SCH_tasks_G[rear - 1].RunMe = 0;
+        SCH_tasks_G[rear - 1].TaskID = SCH_MAX_TASKS;
+
+        rear--; // Decrement rear to indicate the removal of a task
+    }
+}

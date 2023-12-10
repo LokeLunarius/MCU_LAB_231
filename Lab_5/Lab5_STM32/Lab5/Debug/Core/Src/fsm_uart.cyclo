@@ -1,0 +1,6 @@
+../Core/Src/fsm_uart.c:20:6:buffer_clean	1
+../Core/Src/fsm_uart.c:26:5:get_command	8
+../Core/Src/fsm_uart.c:47:6:command_parser_fsm	9
+../Core/Src/fsm_uart.c:76:6:uart2_transmit	1
+../Core/Src/fsm_uart.c:84:6:uart_communication_fsm	3
+../Core/Src/fsm_uart.c:103:6:uart_function	2

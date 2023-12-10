@@ -1,0 +1,22 @@
+/*
+ * general_header.h
+ *
+ *  Created on: Dec 8, 2023
+ *      Author: Loke
+ */
+
+#ifndef INC_GENERAL_HEADER_H_
+#define INC_GENERAL_HEADER_H_
+
+#include <stdio.h>
+#include <stdint.h>
+
+#include "main.h"
+#include "software_timer.h"
+#include "button.h"
+#include "buzzer.h"
+#include "fsm_automatic.h"
+#include "fsm_manual.h"
+#include "fsm_tuning.h"
+
+#endif /* INC_GENERAL_HEADER_H_ */

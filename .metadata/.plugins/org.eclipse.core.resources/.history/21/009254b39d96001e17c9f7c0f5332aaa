@@ -1,0 +1,110 @@
+/*
+ * fsm_uart.c
+ *
+ *  Created on: Nov 23, 2023
+ *      Author: Loke
+ */
+
+#include "fsm_uart.h"
+
+int status = INIT;
+int command = INIT;
+int command_status = COMMAND_STANDBY;
+uint8_t temp = 0;
+uint8_t index_buffer = 0;
+uint8_t buffer_flag = 0;
+uint8_t buffer[MAX_BUFFER_SIZE];
+uint32_t ADC_value = 0;
+char str[60];
+
+void buffer_clean()
+{
+	memset(buffer, 0, sizeof(buffer));
+	index_buffer = 0;
+}
+
+int get_command()
+{
+	switch (index_buffer - 2) {
+		case 3:
+			if(buffer[1] == 'R' && buffer[2] == 'S' && buffer[3] == 'T')
+			{
+				return RST;
+			}
+			break;
+		case 2:
+			if(buffer[1] == 'O' && buffer[2] == 'K')
+			{
+				return OK;
+			}
+			break;
+		default:
+			break;
+	}
+	return 0;
+}
+
+void command_parser_fsm()
+{
+	switch(status){
+	case INIT:
+		status = STANDBY;
+		break;
+	case STANDBY:
+		if(buffer[index_buffer - 1] == '#' && buffer[0] == '!'){
+			status = COMMAND_READ;
+		}
+	case COMMAND_READ:
+		command = get_command();
+		switch (command) {
+			case RST:
+				command_status = COMMAND_START;
+				status = STANDBY;
+				buffer_clean();
+				break;
+			case OK:
+				command_status = COMMAND_STOP;
+				status = STANDBY;
+				buffer_clean();
+				break;
+			default:
+				break;
+		}
+	}
+}
+
+void uart2_transmit()
+{
+	HAL_ADC_Start(&hadc1);
+	ADC_value = HAL_ADC_GetValue(&hadc1);
+	HAL_ADC_Stop(&hadc1);
+	HAL_UART_Transmit(&huart2, (void*)str, sprintf(str, "\r\n!ADC=%lu#\r\n", ADC_value), 1000);
+}
+
+void uart_communication_fsm()
+{
+	switch(command_status){
+	case COMMAND_START:
+		SCH_Add_Task(uart2_transmit, 0, 3000);
+		command_status = COMMAND_STANDBY;
+		break;
+	case COMMAND_STOP:
+		HAL_UART_Transmit(&huart2, (void*)str, sprintf(str, "\r\n!Disconnect#\r\n"), 1000);
+		command_status = COMMAND_STANDBY;
+		uint32_t taskID = task_ID(uart2_transmit);
+		SCH_Delete(taskID);
+		break;
+	default:
+		break;
+	}
+}
+
+void uart_function()
+{
+	  if(buffer_flag == 1){
+		  HAL_GPIO_WritePin(led_purple_GPIO_Port, led_purple_Pin, SET);
+		  command_parser_fsm();
+		  buffer_flag = 0;
+	  }
+	  uart_communication_fsm();
+}

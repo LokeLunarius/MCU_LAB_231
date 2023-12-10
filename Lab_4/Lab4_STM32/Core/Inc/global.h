@@ -10,9 +10,6 @@
 
 #include "main.h"
 #include "software_timer.h"
-#include "stdio.h"
-#include "fsm_uart.h"
-#include "string.h"
 
 extern ADC_HandleTypeDef hadc1;
 
